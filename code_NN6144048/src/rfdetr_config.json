@@ -1,0 +1,123 @@
+{
+  "dataset": {
+    "type": "CocoDetection",
+    "root": "rfdetr_dataset",
+    "train": {
+      "img_folder": "rfdetr_dataset/train",
+      "ann_file": "rfdetr_dataset/annotations/instances_train.json"
+    },
+    "val": {
+      "img_folder": "rfdetr_dataset/val",
+      "ann_file": "rfdetr_dataset/annotations/instances_val.json"
+    },
+    "test": {
+      "img_folder": "test/img",
+      "ann_file": null
+    }
+  },
+  "model": {
+    "type": "RFDETR",
+    "backbone": "resnet50",
+    "num_classes": 1,
+    "num_queries": 300,
+    "aux_loss": true,
+    "with_box_refine": true,
+    "two_stage": false
+  },
+  "train": {
+    "batch_size": 2,
+    "num_workers": 4,
+    "epochs": 50,
+    "lr": 0.0001,
+    "weight_decay": 0.0001,
+    "lr_backbone": 1e-05,
+    "lr_drop": 40,
+    "clip_max_norm": 0.1,
+    "optimizer": "AdamW",
+    "lr_scheduler": "step",
+    "augmentation": {
+      "resize": [
+        640,
+        360
+      ],
+      "random_horizontal_flip": 0.5,
+      "random_select": true,
+      "random_resize": [
+        [
+          480,
+          270
+        ],
+        [
+          512,
+          288
+        ],
+        [
+          544,
+          306
+        ],
+        [
+          576,
+          324
+        ],
+        [
+          608,
+          342
+        ],
+        [
+          640,
+          360
+        ]
+      ],
+      "normalize": {
+        "mean": [
+          0.485,
+          0.456,
+          0.406
+        ],
+        "std": [
+          0.229,
+          0.224,
+          0.225
+        ]
+      }
+    },
+    "loss_weights": {
+      "loss_ce": 2.0,
+      "loss_bbox": 5.0,
+      "loss_giou": 2.0
+    },
+    "matcher": {
+      "cost_class": 2.0,
+      "cost_bbox": 5.0,
+      "cost_giou": 2.0
+    }
+  },
+  "eval": {
+    "batch_size": 1,
+    "metrics": [
+      "mAP",
+      "AP50",
+      "AP75"
+    ],
+    "iou_thresholds": [
+      0.5,
+      0.75
+    ]
+  },
+  "inference": {
+    "confidence_threshold": 0.5,
+    "nms_threshold": 0.5,
+    "max_detections": 100
+  },
+  "save": {
+    "checkpoint_dir": "runs/train/rfdetr_pig_detection",
+    "save_interval": 5,
+    "keep_last_n": 3
+  },
+  "log": {
+    "log_dir": "runs/train/rfdetr_pig_detection/logs",
+    "log_interval": 50,
+    "tensorboard": true,
+    "wandb": false
+  }
+}
